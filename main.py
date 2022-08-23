@@ -6,11 +6,15 @@ def looks_like_template_dir(path):
     return path.find("/instance_infrastructure/") != -1 or path.find("/pipeline_infrastructure/") != -1 or path.find("/schema/") != -1
 
 def top_level_template_dir(path):
+    print("Trying to find tld of " + path)
     instance_infra_folder_index  = path.find("/instance_infrastructure/")
     pipeline_infra_folder_index = path.find("/pipeline_infrastructure/")
     schema_folder_index = path.find("/schema/")
+    print("Index of instance_infra " + instance_infra_folder_index)
     if instance_infra_folder_index != -1:
-        return path[0:instance_infra_folder_index]
+        new_path = path[0:instance_infra_folder_index]
+        print(new_path)
+        return new_path
     if pipeline_infra_folder_index != -1:
         return path[0:pipeline_infra_folder_index]     
     if schema_folder_index != -1:
