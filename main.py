@@ -28,9 +28,10 @@ def main():
     changed_files = os.environ["INPUT_CHANGED_FILES"].split(",")
     print(changed_files)
     # Next, I want to group these into template directories
-    changed_template_files = filter(looks_like_template_dir, changed_files)
-    print(set(changed_template_files))
+    changed_template_files = set(filter(looks_like_template_dir, changed_files))
+    print(changed_template_files)
 
+    print("Ok, this is where everything breaks...")
     template_dirs = set(map(top_level_template_dir, changed_template_files))
     print(template_dirs)
 
