@@ -2,9 +2,8 @@ import os
 from jinja2 import Environment, FileSystemLoader
 import yaml
 
-
 def looks_like_template_dir(path): 
-    path.find("/instance_infrastructure/") != -1 or path.find("/pipeline_infrastructure/") != -1 or path.find("/schema/") != -1
+    return path.find("/instance_infrastructure/") != -1 or path.find("/pipeline_infrastructure/") != -1 or path.find("/schema/") != -1
 
 def top_level_template_dir(path):
     instance_infra_folder_index  = path.find("/instance_infrastructure/")
