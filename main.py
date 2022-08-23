@@ -10,12 +10,16 @@ def top_level_template_dir(path):
     instance_infra_folder_index  = path.find("/instance_infrastructure/")
     pipeline_infra_folder_index = path.find("/pipeline_infrastructure/")
     schema_folder_index = path.find("/schema/")
+    spec_folder_index = path.find("/spec/spec.yaml")
+
     if instance_infra_folder_index != -1:
         return path[0:instance_infra_folder_index]
     if pipeline_infra_folder_index != -1:
         return path[0:pipeline_infra_folder_index]     
     if schema_folder_index != -1:
         return path[0:schema_folder_index]     
+    if spec_folder_index != -1:
+        return path[0:spec_folder_index]
     return ""
 
 def main():
@@ -28,7 +32,6 @@ def main():
     changed_template_files = set(filter(looks_like_template_dir, changed_files))
     print(changed_template_files)
 
-    print("Ok, this is where everything breaks...")
     template_dirs = set(map(top_level_template_dir, changed_template_files))
     print(template_dirs)
 
