@@ -19,14 +19,14 @@ def top_level_template_dir(path):
     return ""
 
 def main():
-    repo_path = os.environ["GITHUB_WORKSPACE"]
+    repo_path =""
     print(repo_path)
     # First, i want to fetch all the files that have changed.
     changed_files = os.environ["INPUT_CHANGED_FILES"].split(",")
     print(changed_files)
     # Next, I want to group these into template directories
     changed_template_files = filter(looks_like_template_dir, changed_files)
-    print(changed_template_files)
+    print(set(changed_template_files))
 
     template_dirs = set(map(top_level_template_dir, changed_template_files))
     print(template_dirs)
@@ -44,10 +44,6 @@ def main():
                 rendered_pipeline_yaml = pipeline_infra_template.render(sample_spec_yaml)
             except yaml.YAMLError as exc:
                 print(exc)
-
-
-    print(f"::set-output name=myOutput::{my_output}")
-
 
 if __name__ == "__main__":
     main()
