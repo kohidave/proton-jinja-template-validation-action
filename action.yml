@@ -1,6 +1,11 @@
 name: "AWS Proton Jinja Template Validation Action"
 description: "This action validates that a template renders correctly"
 author: "David Killmon"
+inputs:
+  changed_files:
+    description: "Input to use"
+    required: false
+    default: ""
 runs:
   using: "docker"
   image: "Dockerfile"
