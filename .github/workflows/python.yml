@@ -1,8 +1,8 @@
-name: Lint
-on: [push, pull_request]
+name: JinjaTemplateValidation
+on: [pull_request]
 jobs:
-  lint:
-    name: Lint
+  JinjaTemplateValidation:
+    name: JinjaTemplateValidation
     runs-on: ubuntu-latest
     steps:
       - name: Set up Python 3.7
@@ -11,8 +11,21 @@ jobs:
           python-version: "3.7"
 
       - uses: actions/checkout@v1
-
-      - name: Lint
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v29.0.0
+        with:
+          separator: ","
+      - name: Render
+        with: 
+          changed_files: "${{steps.changed-files.outputs.all_changed_files}}"
         run: |
           pip install flake8
           flake8 main.py
+      - name: Setup Cloud Formation Linter with Latest Version
+        uses: scottbrenner/cfn-lint-action@v2
+
+      - name: Print the Cloud Formation Linter Version & run Linter.
+        run: |
+          cfn-lint --version
+          cfn-lint -t ./template.yml
