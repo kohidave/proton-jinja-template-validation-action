@@ -22,7 +22,7 @@ def main():
     repo_path = os.environ["GITHUB_WORKSPACE"]
     print(repo_path)
     # First, i want to fetch all the files that have changed.
-    changed_files = os.environ["changed_files"].split(",")
+    changed_files = os.environ["INPUT_CHANGED_FILES"].split(",")
     print(changed_files)
     # Next, I want to group these into template directories
     changed_template_files = filter(looks_like_template_dir, changed_files)
