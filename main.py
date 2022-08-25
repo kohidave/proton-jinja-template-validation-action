@@ -23,12 +23,10 @@ def top_level_template_dir(path):
     return ""
 
 def build_service_instance_input(spec, env_outputs):
-    print(spec)
-    print(spec['instances'])
-    service_instance_config = spec['instances'][0]
+    service_instance_config = spec.instances[0]
     return {
         "environment": {
-            "name": service_instance_config['environment'],
+            "name": service_instance_config.environment,
             "account_id": "1111111111",
             "outputs" : env_outputs},
         "service": {
@@ -37,8 +35,8 @@ def build_service_instance_input(spec, env_outputs):
             "repository_connection_arn": "arn:connection:dummy",
             "repository_id": "github/sample-repo"},
         "service_instance": {
-            "name": service_instance_config['name'],
-            "inputs": service_instance_config['spec']
+            "name": service_instance_config.name,
+            "inputs": service_instance_config.spec
         # No components yet
         }
     }
