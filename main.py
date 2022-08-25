@@ -22,6 +22,25 @@ def top_level_template_dir(path):
         return path[0:spec_folder_index]
     return ""
 
+def build_service_instance_input(spec, env_outputs):
+    service_instance_config = spec["instances"][0]
+    return {
+        "environment": {
+            "name": service_instance_config["environment"],
+            "account_id": "1111111111",
+            "outputs" : env_outputs},
+        "service": {
+            "name": "sample-service",
+            "branch_name": "main",
+            "repository_connection_arn": "arn:connection:dummy",
+            "repository_id": "github/sample-repo"},
+        "service_instance": {
+            "name": service_instance_config["name"],
+            "inputs": service_instance_config["spec"]
+        # No components yet
+        }
+    }
+
 def main():
     repo_path =""
     print(repo_path)
@@ -44,8 +63,13 @@ def main():
         with open(repo_path + template_dir + "/spec/spec.yaml", "r") as stream:
             try:
                 sample_spec_yaml = print(yaml.safe_load(stream))
-                rendered_instance_yaml = instance_infra_template.render(sample_spec_yaml)
-                rendered_pipeline_yaml = pipeline_infra_template.render(sample_spec_yaml)
+                instnace_render_input = build_service_instance_input(sample_spec_yaml, {
+                        "TableName": "DummyTable" # This should come from customer
+                }
+                print(instnace_render_input)
+                rendered_instance_yaml = instance_infra_template.render(instnace_render_input)
+                )
+                #rendered_pipeline_yaml = pipeline_infra_template.render(sample_spec_yaml)
             except yaml.YAMLError as exc:
                 print(exc)
 
