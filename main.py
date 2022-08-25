@@ -23,10 +23,13 @@ def top_level_template_dir(path):
     return ""
 
 def build_service_instance_input(spec, env_outputs):
-    service_instance_config = spec.instances[0]
+    print("cccc")
+    print(spec)
+    print('dddd')
+    service_instance_config = spec['instances'][0]
     return {
         "environment": {
-            "name": service_instance_config.environment,
+            "name": service_instance_config['environment'],
             "account_id": "1111111111",
             "outputs" : env_outputs},
         "service": {
@@ -35,24 +38,20 @@ def build_service_instance_input(spec, env_outputs):
             "repository_connection_arn": "arn:connection:dummy",
             "repository_id": "github/sample-repo"},
         "service_instance": {
-            "name": service_instance_config.name,
-            "inputs": service_instance_config.spec
+            "name": service_instance_config['name'],
+            "inputs": service_instance_config['spec']
         # No components yet
         }
     }
 
 def main():
     repo_path =""
-    print(repo_path)
     # First, i want to fetch all the files that have changed.
     changed_files = os.environ["INPUT_CHANGED_FILES"].split(",")
-    print(changed_files)
     # Next, I want to group these into template directories
     changed_template_files = set(filter(looks_like_template_dir, changed_files))
-    print(changed_template_files)
 
     template_dirs = set(map(top_level_template_dir, changed_template_files))
-    print(template_dirs)
 
     for template_dir in template_dirs:
         environment = Environment(loader=FileSystemLoader(repo_path + template_dir))
@@ -63,6 +62,9 @@ def main():
         with open(repo_path + template_dir + "/spec/spec.yaml", "r") as stream:
             try:
                 sample_spec_yaml = print(yaml.safe_load(stream))
+                print("aaaaa")
+                print(sample_spec_yaml)
+                print("bbbbb")
                 instnace_render_input = build_service_instance_input(sample_spec_yaml, {
                         "TableName": "DummyTable" # This should come from customer
                 })
