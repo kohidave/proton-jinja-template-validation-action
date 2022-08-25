@@ -65,10 +65,10 @@ def main():
                 sample_spec_yaml = print(yaml.safe_load(stream))
                 instnace_render_input = build_service_instance_input(sample_spec_yaml, {
                         "TableName": "DummyTable" # This should come from customer
-                }
+                })
                 print(instnace_render_input)
                 rendered_instance_yaml = instance_infra_template.render(instnace_render_input)
-                )
+                print(rendered_instance_yaml)
                 #rendered_pipeline_yaml = pipeline_infra_template.render(sample_spec_yaml)
             except yaml.YAMLError as exc:
                 print(exc)
