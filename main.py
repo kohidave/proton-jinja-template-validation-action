@@ -23,9 +23,6 @@ def top_level_template_dir(path):
     return ""
 
 def build_service_instance_input(spec, env_outputs):
-    print("cccc")
-    print(spec)
-    print('dddd')
     service_instance_config = spec['instances'][0]
     return {
         "environment": {
@@ -61,10 +58,8 @@ def main():
         # assume a spec/spec.yaml file
         with open(repo_path + template_dir + "/spec/spec.yaml", "r") as stream:
             try:
-                sample_spec_yaml = print(yaml.safe_load(stream))
-                print("aaaaa")
+                sample_spec_yaml = yaml.safe_load(stream)
                 print(sample_spec_yaml)
-                print("bbbbb")
                 instnace_render_input = build_service_instance_input(sample_spec_yaml, {
                         "TableName": "DummyTable" # This should come from customer
                 })
