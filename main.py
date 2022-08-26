@@ -1,4 +1,5 @@
 import os
+from cfnlint.api import lint_all
 from jinja2 import Environment, FileSystemLoader
 import yaml
 
@@ -88,6 +89,7 @@ def main():
                         print("Rendered template:")
                         print(rendered_instance_yaml)
                         #rendered_pipeline_yaml = pipeline_infra_template.render(sample_spec_yaml)
+                        lint_all(rendered_instance_yaml)
             except yaml.YAMLError as exc:
                 print(exc)                    
 
