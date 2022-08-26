@@ -54,7 +54,7 @@ def add_defaults_to_spec(sample_spec_yaml, schema_file_yaml):
     default_values = default_values_from_schema(schema_file_yaml)
     for instance in sample_spec_yaml['instances']:
         instance["spec"] = default_values | instance["spec"]
-        
+
 def main():
     repo_path =""
     # First, i want to fetch all the files that have changed.
@@ -73,18 +73,21 @@ def main():
             try:
                 schema = yaml.safe_load(schemaStream)
                 # assume a spec/spec.yaml file
-                with open(repo_path + template_dir + "/spec/spec.yaml", "r") as specStream:
-                    sample_spec_yaml = yaml.safe_load(specStream)
-                    add_defaults_to_spec(sample_spec_yaml, schema)
-                    print("spec with defaults:")
-                    print(sample_spec_yaml)
-                    instnace_render_input = build_service_instance_input(sample_spec_yaml, {
-                            "TableName": "DummyTable" # This should come from customer
-                    })
-                    print(instnace_render_input)
-                    rendered_instance_yaml = instance_infra_template.render(instnace_render_input)
-                    print(rendered_instance_yaml)
-                    #rendered_pipeline_yaml = pipeline_infra_template.render(sample_spec_yaml)
+                with open(repo_path + template_dir + "/spec/sample-env-outputs.yaml", "r") as envOutputsStream:
+                    env_outputs_yaml = yaml.safe_load(envOutputsStream)
+                    with open(repo_path + template_dir + "/spec/spec.yaml", "r") as specStream:
+
+                        sample_spec_yaml = yaml.safe_load(specStream)
+                        add_defaults_to_spec(sample_spec_yaml, schema)
+                        print("spec with defaults:")
+                        print(sample_spec_yaml)
+                        instnace_render_input = build_service_instance_input(sample_spec_yaml, env_outputs_yaml)
+                        print("Protonized spec")
+                        print(instnace_render_input)
+                        rendered_instance_yaml = instance_infra_template.render(instnace_render_input)
+                        print("Rendered template:")
+                        print(rendered_instance_yaml)
+                        #rendered_pipeline_yaml = pipeline_infra_template.render(sample_spec_yaml)
             except yaml.YAMLError as exc:
                 print(exc)                    
 
