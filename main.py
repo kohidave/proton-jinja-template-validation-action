@@ -46,7 +46,7 @@ def default_values_from_schema(schema):
     schema_parameters = schema["schema"]["types"][schema_input_type_name]["properties"]
     property_defaults = {}
     for property, definition in schema_parameters.items():
-        if (definition.has_key("default")): 
+        if ("default" in definition): 
             property_defaults[property] = definition["default"]
     return property_defaults
 
