@@ -1,4 +1,4 @@
-# AWS Proton Template Rendering Validation
+# AWS Proton CFN Template Validation Action
 
 This action makes it easy for you to validate changes to an AWS Proton CloudFormation/Jinja based template. Whenever a pull request is created that touches a template file, this action will:
 
