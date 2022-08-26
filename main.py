@@ -52,7 +52,7 @@ def default_values_from_schema(schema):
 
 def read_hydrated_spec(sample_spec_yaml, schema_file_yaml):
     default_values = default_values_from_schema(schema_file_yaml)
-    return sample_spec_yaml['instances'].map(lambda provided_values: default_values | provided_values )
+    return map(lambda provided_values: default_values | provided_values, sample_spec_yaml['instances'])
 
 def main():
     repo_path =""
