@@ -52,9 +52,9 @@ def default_values_from_schema(schema):
 
 def add_defaults_to_spec(sample_spec_yaml, schema_file_yaml):
     default_values = default_values_from_schema(schema_file_yaml)
-    instance_values = map(lambda provided_values: default_values | provided_values, sample_spec_yaml['instances'])
-    sample_spec_yaml['instances'] = list(instance_values)
-
+    for instance in sample_spec_yaml['instances']:
+        instance["spec"] = default_values | instance["spec"]
+        
 def main():
     repo_path =""
     # First, i want to fetch all the files that have changed.
