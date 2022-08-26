@@ -53,7 +53,7 @@ def default_values_from_schema(schema):
 def add_defaults_to_spec(sample_spec_yaml, schema_file_yaml):
     default_values = default_values_from_schema(schema_file_yaml)
     instance_values = map(lambda provided_values: default_values | provided_values, sample_spec_yaml['instances'])
-    sample_spec_yaml['instances'] = instance_values
+    sample_spec_yaml['instances'] = list(instance_values)
 
 def main():
     repo_path =""
