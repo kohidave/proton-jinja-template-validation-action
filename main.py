@@ -105,10 +105,10 @@ def main():
         print("======================================")
         print("🕵️ Linting failed")
         print(linting_errors)
-        for file, errors in linting_errors:
-            print("    Error(s) in ", file)
+        for file, errors in linting_errors.items():
+            print("\tError(s) in ", file)
             for error in errors:
-                print("        ", error)
+                print("\t\t", error)
         raise Exception("The changes for one or more of the templates failed linting") 
 
 
