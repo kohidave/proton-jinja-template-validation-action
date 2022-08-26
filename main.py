@@ -41,6 +41,19 @@ def build_service_instance_input(spec, env_outputs):
         }
     }
 
+def default_values_from_schema(schema):
+    schema_input_type_name = schema["schema"]["service_input_type"]
+    schema_parameters = schema["types"][schema_input_type_name]["properties"]
+    property_defaults = {}
+    for property, definition in schema_parameters.iteritems():
+        if (definition.default != None): 
+            property_defaults[property] = definition.default
+    return property_defaults
+
+def read_hydrated_spec(sample_spec_yaml, schema_file_yaml):
+    default_values = default_values_from_schema(schema_file_yaml)
+    return sample_spec_yaml['instances'].map(lambda provided_values: default_values | provided_values )
+
 def main():
     repo_path =""
     # First, i want to fetch all the files that have changed.
@@ -55,20 +68,25 @@ def main():
         instance_infra_template = environment.get_template("/instance_infrastructure/cloudformation.yaml")
         pipeline_infra_template = environment.get_template("/pipeline_infrastructure/cloudformation.yaml")
 
-        # assume a spec/spec.yaml file
-        with open(repo_path + template_dir + "/spec/spec.yaml", "r") as stream:
+        with open(repo_path+template_dir+"/schema/schema.yaml", "r") as schemaStream:
             try:
-                sample_spec_yaml = yaml.safe_load(stream)
-                print(sample_spec_yaml)
-                instnace_render_input = build_service_instance_input(sample_spec_yaml, {
-                        "TableName": "DummyTable" # This should come from customer
-                })
-                print(instnace_render_input)
-                rendered_instance_yaml = instance_infra_template.render(instnace_render_input)
-                print(rendered_instance_yaml)
-                #rendered_pipeline_yaml = pipeline_infra_template.render(sample_spec_yaml)
+                schema = yaml.safe_load(schemaStream)
+                # assume a spec/spec.yaml file
+                with open(repo_path + template_dir + "/spec/spec.yaml", "r") as specStream:
+                    sample_spec_yaml = yaml.safe_load(specStream)
+                    hydrated_spec = read_hydrated_spec(sample_spec_yaml, schema)
+                    print("spec with defaults:")
+                    print(hydrated_spec)
+                    instnace_render_input = build_service_instance_input(hydrated_spec, {
+                            "TableName": "DummyTable" # This should come from customer
+                    })
+                    print(instnace_render_input)
+                    rendered_instance_yaml = instance_infra_template.render(instnace_render_input)
+                    print(rendered_instance_yaml)
+                    #rendered_pipeline_yaml = pipeline_infra_template.render(sample_spec_yaml)
             except yaml.YAMLError as exc:
-                print(exc)
+                print(exc)                    
+
 
 if __name__ == "__main__":
     main()
