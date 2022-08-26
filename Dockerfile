@@ -1,4 +1,4 @@
-FROM python:3.9-slim AS builder
+FROM python:3.10-slim
 ADD . /app
 WORKDIR /app
 
@@ -6,10 +6,5 @@ WORKDIR /app
 RUN pip install --target=/app Jinja2
 RUN pip install --target=/app pyyaml
 
-# A distroless container image with Python and some basics like SSL certificates
-# https://github.com/GoogleContainerTools/distroless
-FROM python:3.9-slim
-COPY --from=builder /app /app
-WORKDIR /app
 ENV PYTHONPATH /app
-CMD ["/app/main.py"]
+CMD [ "python", "/app/main.py" ]
