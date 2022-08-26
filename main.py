@@ -1,4 +1,5 @@
 import os
+from pprint import pprint
 from cfnlint.api import lint_all
 from jinja2 import Environment, FileSystemLoader
 import yaml
@@ -64,7 +65,7 @@ def main():
     changed_template_files = set(filter(looks_like_template_dir, changed_files))
 
     template_dirs = set(map(top_level_template_dir, changed_template_files))
-
+    linting_errors = {}
     for template_dir in template_dirs:
         environment = Environment(loader=FileSystemLoader(repo_path + template_dir))
         instance_infra_template = environment.get_template("/instance_infrastructure/cloudformation.yaml")
@@ -89,9 +90,25 @@ def main():
                         print("Rendered template:")
                         print(rendered_instance_yaml)
                         #rendered_pipeline_yaml = pipeline_infra_template.render(sample_spec_yaml)
-                        print(lint_all(rendered_instance_yaml))
+                        lint_results = lint_all(rendered_instance_yaml)
+                        pprint(lint_results)
+                        for result in lint_results:
+                            if result.rule.severity == "error":
+                                if (repo_path + template_dir) in linting_errors:
+                                    linting_errors[repo_path + template_dir].append(result)
+                                else:
+                                    linting_errors[repo_path + template_dir] = [result]
             except yaml.YAMLError as exc:
                 print(exc)                    
+    if linting_errors:
+        print()
+        print("======================================")
+        print("🕵️ Linting failed")
+        for file, errors in linting_errors:
+            print("\tError(s) in " + file)
+            for error in errors:
+                print("\t\t " + error)
+        raise Exception("The changes for one or more of the templates failed linting") 
 
 
 if __name__ == "__main__":
