@@ -50,9 +50,61 @@ jobs:
 
 ```
 
+### Sample Files
+
+In order to render your template, this action expects a `spec/` directory in the template bundle with a sample `spec.yaml` and an `sample-env-outputs.yaml` (for Service Templates). Here's an example layout:
+
+
+```
+/my-template/instance_infrastructure/...
+/my-template/pipeline_infrastructure/...
+/my-template/schema/                        # The schema is validated and used to inject default values
+/my-template/schema/schema.yaml
+/my-template/spec/
+/my-template/spec/spec.yaml                 # This is a real life spec, filled out. This is used to emulate a developer spec
+/my-template/spec/sample-env-outputs.yaml   # This file contains a key value yaml of sample environment outputs [service templates only]
+```
+
+An example `sample-env-outputs.yaml` might look like this:
+
+```yaml
+SNSTopicArn: arn:aws:sns:my-cool-topic
+SNSTopicName: my-cool-topic
+VPCSecurityGroup: daves-cool-security-group
+PrivateSubnet1: subnet-1
+PrivateSubnet2: subnet-2
+PublicSubnet1: public-subnet-1
+PublicSubnet2: public-subnet-2
+```
+
+This will be used to fill in the values in your service template like:
+
+```yaml
+      Environment:
+        Variables:
+          SNSTopicArn: '{{environment.outputs.SNSTopicArn}}'
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+        - SNSPublishMessagePolicy:
+            TopicName: '{{environment.outputs.SNSTopicName}}'
+      VpcConfig:
+        SecurityGroupIds:
+          - '{{environment.outputs.VPCSecurityGroup}}'
+        SubnetIds:
+        {% if service_instance.inputs.subnet_type == 'private' %}
+            - '{{environment.outputs.PrivateSubnet1}}'
+            - '{{environment.outputs.PrivateSubnet2}}'
+        {% else %}
+            - '{{environment.outputs.PublicSubnet1}}'
+            - '{{environment.outputs.PublicSubnet2}}'
+        {% endif %}
+```
+
+
 ## Limitations
 
 This is currently a work-in-progress, here are some things we don't currently support:
 
 1. Environment templates
-2. Components 
+2. Pipeline templates
+3. Components 
