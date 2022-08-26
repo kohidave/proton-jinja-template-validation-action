@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS builder
+FROM python:3.9-slim AS builder
 ADD . /app
 WORKDIR /app
 
@@ -8,7 +8,7 @@ RUN pip install --target=/app pyyaml
 
 # A distroless container image with Python and some basics like SSL certificates
 # https://github.com/GoogleContainerTools/distroless
-FROM python:3.11-slim
+FROM python:3.9-slim
 COPY --from=builder /app /app
 WORKDIR /app
 ENV PYTHONPATH /app
