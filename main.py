@@ -43,7 +43,7 @@ def build_service_instance_input(spec, env_outputs):
 
 def default_values_from_schema(schema):
     schema_input_type_name = schema["schema"]["service_input_type"]
-    schema_parameters = schema["types"][schema_input_type_name]["properties"]
+    schema_parameters = schema["schema"]["types"][schema_input_type_name]["properties"]
     property_defaults = {}
     for property, definition in schema_parameters.iteritems():
         if (definition.default != None): 
