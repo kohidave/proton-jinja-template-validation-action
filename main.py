@@ -1,5 +1,6 @@
 import os
 from pprint import pprint
+import sys
 from cfnlint.api import lint_all
 from jinja2 import Environment, FileSystemLoader
 import yaml
@@ -108,8 +109,7 @@ def main():
             print("Error(s) in ", file)
             for error in errors:
                 print("\t", error)
-        return -1 
-
+        sys.exit("Errors detected linting templates")
 
 if __name__ == "__main__":
     main()
