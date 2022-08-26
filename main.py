@@ -50,9 +50,10 @@ def default_values_from_schema(schema):
             property_defaults[property] = definition["default"]
     return property_defaults
 
-def read_hydrated_spec(sample_spec_yaml, schema_file_yaml):
+def add_defaults_to_spec(sample_spec_yaml, schema_file_yaml):
     default_values = default_values_from_schema(schema_file_yaml)
-    return map(lambda provided_values: default_values | provided_values, sample_spec_yaml['instances'])
+    instance_values = map(lambda provided_values: default_values | provided_values, sample_spec_yaml['instances'])
+    sample_spec_yaml['instances'] = instance_values
 
 def main():
     repo_path =""
@@ -74,10 +75,10 @@ def main():
                 # assume a spec/spec.yaml file
                 with open(repo_path + template_dir + "/spec/spec.yaml", "r") as specStream:
                     sample_spec_yaml = yaml.safe_load(specStream)
-                    hydrated_spec = read_hydrated_spec(sample_spec_yaml, schema)
+                    add_defaults_to_spec(sample_spec_yaml, schema)
                     print("spec with defaults:")
-                    print(hydrated_spec)
-                    instnace_render_input = build_service_instance_input(hydrated_spec, {
+                    print(sample_spec_yaml)
+                    instnace_render_input = build_service_instance_input(sample_spec_yaml, {
                             "TableName": "DummyTable" # This should come from customer
                     })
                     print(instnace_render_input)
