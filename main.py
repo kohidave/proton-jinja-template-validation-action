@@ -46,8 +46,8 @@ def default_values_from_schema(schema):
     schema_parameters = schema["schema"]["types"][schema_input_type_name]["properties"]
     property_defaults = {}
     for property, definition in schema_parameters.items():
-        if (definition.default != None): 
-            property_defaults[property] = definition.default
+        if (definition["default"] != None): 
+            property_defaults[property] = definition["default"]
     return property_defaults
 
 def read_hydrated_spec(sample_spec_yaml, schema_file_yaml):
