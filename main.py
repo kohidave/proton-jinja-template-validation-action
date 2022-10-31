@@ -4,6 +4,7 @@ import sys
 from cfnlint.api import lint_all
 from jinja2 import Environment, FileSystemLoader
 import yaml
+from template_checker.template_dir import TemplateDir
 
 def looks_like_template_dir(path): 
     return path.find("/instance_infrastructure/") != -1 or path.find("/pipeline_infrastructure/") != -1 or path.find("/schema/") != -1 or path.find("/spec/spec.yaml") != -1
