@@ -32,7 +32,7 @@ class TemplateDir:
     def from_paths(paths):
         template_files = set(filter(TemplateDir.is_path_template_dir, paths))
         template_dirs = set(map(TemplateDir.top_level_template_dir, template_files))
-        return set(map(lambda template_path: TemplateDir.init("", template_path), template_dirs))
+        return set(map(lambda template_path: TemplateDir("", template_path), template_dirs))
 
     def __init__(self, repo_path, template_path):
         self.repo_path = repo_path
