@@ -40,19 +40,19 @@ def main():
             # Render and lint the Service Instance template
             rendered_service_instance_cf = renderer.render_service_instance()
             linting_results.extend(lint_all(rendered_service_instance_cf))
-            print_group(template_dir.template_path + " Service Instance Rendered Template", rendered_service_instance_cf)
-            rendered_templates[template_dir.template_path+"service-instance"] = rendered_service_instance_cf
+            print_group(template_dir.instance_infra_path(), rendered_service_instance_cf)
+            rendered_templates[template_dir.instance_infra_path()] = rendered_service_instance_cf
             # Render and lint the Pipeline template, if it is present.
             #if schema_for_template_dir.schema_type().pipeline_present:
             #    rendered_pipeline_cf = renderer.render_pipeline() 
             #    linting_results.extend(lint_all(rendered_pipeline_cf))
-            #    print_group(template_dir.template_path + " Pipeline Rendered Template", rendered_pipeline_cf)
-            #    rendered_templates[template_dir.template_path+"pipeline"] = rendered_pipeline_cf
+            #    print_group(template_dir.pipeline_infra_path(), rendered_pipeline_cf)
+            #    rendered_templates[template_dir.pipeline_infra_path()] = rendered_pipeline_cf
         elif schema_for_template_dir.schema_type().is_env:
             rendered_cloudformation = renderer.render_environment()
             linting_results.extend(lint_all(rendered_cloudformation))
-            print_group(template_dir.template_path + " Environment Rendered Template", rendered_cloudformation)
-            rendered_templates[template_dir.template_path+"environment"] = rendered_cloudformation
+            print_group(template_dir.environment_infra_path(), rendered_cloudformation)
+            rendered_templates[template_dir.environment_infra_path()] = rendered_cloudformation
 
         for result in linting_results:
             if result.rule.severity == "error":

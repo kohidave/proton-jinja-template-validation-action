@@ -56,3 +56,12 @@ class TemplateDir:
 
     def environment_infra_relative_path(self):
         return "/infrastructure/cloudformation.yaml"
+
+    def instance_infra_path(self):
+        return self.path + self.instance_infra_relative_path()
+
+    def pipeline_infra_path(self):
+        return self.path + self.pipeline_infra_relative_path()
+
+    def environment_infra_path(self):
+        return self.path + self.environment_infra_relative_path()        
