@@ -61,7 +61,7 @@ def main():
                 print_warning(result.filename, result.linenumber, result.rule.shortdesc, result.message)                
 
     # Write a summary markdown file so the customer gets a nice view of what happened.
-    with open(os.environ("$GITHUB_STEP_SUMMARY"), 'w') as f:
+    with open(os.environ["GITHUB_STEP_SUMMARY"], 'w') as f:
         f.write(Summary(failed, linting_results, rendered_templates).markdown())
     if failed:
         sys.exit("Errors detected linting templates")
