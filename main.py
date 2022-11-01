@@ -26,7 +26,7 @@ class CheckerResult:
         self.rendered_template = rendered_template
     
     def log_rendered_template(self):
-            print_group(self.path, self.rendered_template)
+        print_group(self.path, self.rendered_template)
     
     def log_linter_findings(self):
         for result in self.linter_results:
@@ -40,7 +40,6 @@ class CheckerResult:
             if result.rule.severity == "error":
                 return True
         return False
-
 
 
 def main():
