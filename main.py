@@ -19,11 +19,17 @@ def print_warning(file_name, line, title, message):
 def print_error(file_name, line, title, message):
     print("::error file=%s,line=%s,title=%s::%s" % (file_name, line, title, message))
 
+class JinjaError:
+    def __init__(self, message, lineno = -1):
+        self.message = message
+        self.lineno = lineno
+
 class CheckerResult:
-    def __init__(self, template_path, linter_results, rendered_template):
+    def __init__(self, template_path, linter_results = [], jinja_errors = None, rendered_template = ""):
         self.path = template_path
         self.linter_results = linter_results
         self.rendered_template = rendered_template
+        self.jinja_errors = jinja_errors
     
     def log_rendered_template(self):
         print_group(self.path, self.rendered_template)
@@ -34,11 +40,18 @@ class CheckerResult:
                 print_error(self.path, result.linenumber, result.rule.shortdesc, result.message)
             elif result.rule.severity == "warning":
                 print_warning(self.path, result.linenumber, result.rule.shortdesc, result.message)                
-   
-    def has_linter_errors(self):
+
+    def log_findings(self):
+        self.log_linter_findings()
+        if self.jinja_errors is not None:
+            print_error(self.path, self.jinja_errors.lineno, "Jinja error", self.jinja_errors.message):
+
+    def has_errors(self):
         for result in self.linter_results:
             if result.rule.severity == "error":
                 return True
+        if self.jinja_errors is not None:
+            return True 
         return False
 
 
@@ -57,27 +70,36 @@ def main():
     for template_dir in template_dirs:
         schema_for_template_dir = SchemaReader(template_dir)
         renderer = Renderer(template_dir, schema_for_template_dir)
-        linting_results = []
+
         # Render and lint the rendered CloudFormation
         if schema_for_template_dir.schema_type().is_service:
             # Render and lint the Service Instance template
-            rendered_service_instance_cf = renderer.render_service_instance()
-            checker_result = CheckerResult(template_dir.instance_infra_path(), lint_all(rendered_service_instance_cf), rendered_service_instance_cf)
-            checker_results.append(checker_result)
+            try: 
+                rendered_service_instance_cf = renderer.render_service_instance()
+                checker_result = CheckerResult(template_dir.instance_infra_path(), lint_all(rendered_service_instance_cf), [], rendered_service_instance_cf)
+                checker_results.append(checker_result)
+            except jinja2.TemplateSyntaxError as exc:
+                checker_results.append(CheckerResult(template_dir.instance_infra_path(), [], JinjaError(exec.message, exec.lineno), ""))
+            except jinja2.TemplateError as exc:
+                checker_results.append(CheckerResult(template_dir.instance_infra_path(), [], JinjaError(exec.message, -1), ""))
+
+
             # Render and lint the Pipeline template, if it is present.
             #if schema_for_template_dir.schema_type().pipeline_present:
-            #    rendered_pipeline_cf = renderer.render_pipeline() 
-            #    linting_results.extend(lint_all(rendered_pipeline_cf))
-            #    print_group(template_dir.pipeline_infra_path(), rendered_pipeline_cf)
-            #    rendered_templates[template_dir.pipeline_infra_path()] = rendered_pipeline_cf
         elif schema_for_template_dir.schema_type().is_env:
-            rendered_cloudformation = renderer.render_environment()
-            checker_result = CheckerResult(template_dir.environment_infra_path(), lint_all(rendered_cloudformation), rendered_cloudformation)
-            checker_results.append(checker_result)
+            try:
+                rendered_cloudformation = renderer.render_environment()
+                checker_result = CheckerResult(template_dir.environment_infra_path(), lint_all(rendered_cloudformation), [], rendered_cloudformation)
+                checker_results.append(checker_result)
+            except jinja2.TemplateSyntaxError as exc:
+                checker_results.append(CheckerResult(template_dir.instance_infra_path(), [], JinjaError(exec.message, exec.lineno), ""))
+            except jinja2.TemplateError as exc:
+                checker_results.append(CheckerResult(template_dir.instance_infra_path(), [], JinjaError(exec.message, -1), ""))
+
 
         for result in checker_results:
-            result.log_linter_findings()
-            if result.has_linter_errors():
+            result.log_findings()
+            if result.has_errors():
                 failed = True
 
     # Write a summary markdown file so the customer gets a nice view of what happened.

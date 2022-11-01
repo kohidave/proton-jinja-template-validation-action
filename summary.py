@@ -20,12 +20,16 @@ class Summary:
                 elif result.rule.severity == "warning":
                     markdown.append(f" * ⚠️ line {result.linenumber} __{result.rule.shortdesc}__")
                     markdown.append(f"   * {result.message}")
-        markdown.append("## Rendered Templates")
+        markdown.append("## Template Rendering")
         for checker_result in self.checker_results:
-            markdown.append(f"<details><summary> {checker_result.path} </summary>")
-            markdown.append("")
-            markdown.append("```yaml")
-            markdown.append(checker_result.rendered_template)
-            markdown.append("```")
-            markdown.append("</detail>")
+            if checker_result.jinja_errors is not None:
+                markdown.append(f"__{checker_result.path}__")
+                markdown.append(f" ❌ Jinja error on line {checker_result.jinja_errors.lineno} __{checker_result.jinja_errors.message}__")
+            else:
+                markdown.append(f"<details><summary> {checker_result.path} </summary>")
+                markdown.append("")
+                markdown.append("```yaml")
+                markdown.append(checker_result.rendered_template)
+                markdown.append("```")
+                markdown.append("</detail>")
         return "\n".join(markdown)
