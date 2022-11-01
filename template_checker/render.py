@@ -11,7 +11,7 @@ class Renderer:
 
     def render_service_instance(self):
         instance_infra_template = self.environment.get_template(self.template_dir.instance_infra_relative_path())
-        return instance_infra_template.render(self.input_provider.service_instance_render_input)
+        return instance_infra_template.render(self.input_provider.service_instance_render_input())
 
     def render_pipeline(self):
         pipeline_infra_template = self.environment.get_template(self.template_dir.pipeline_infra_relative_path())
