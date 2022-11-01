@@ -2,13 +2,13 @@ import yaml
 
 class SchemaType:
     def __init__(self, schema):
-        if schema["schema"]["service_input_type"] is not None:
+        if "service_input_type" in schema["schema"]:
             self.template_type = "SERVICE"
             self.schema_path = "service_input_type"
             self.is_service = True
             self.is_env = False
-            self.pipeline_present = schema["schema"]["pipeline_input_type"] != None
-        elif schema["schema"]["environment_input_type"] is not None:
+            self.pipeline_present =  "pipeline_input_type" in schema["schema"]
+        elif "environment_input_type" in schema["schema"]:
             self.template_type = "ENVIRONMENT"
             self.schema_path = "service_input_type"
             self.is_service = False
@@ -20,6 +20,7 @@ class SchemaType:
 class SchemaReader:
     def __init__(self, templateDir):
         self.templateDir = templateDir
+        self.schema = None
     
     # Opens the schema file and parses the YAML
     def __read_schema(self):
