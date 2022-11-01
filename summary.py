@@ -7,10 +7,10 @@ class Summary:
         markdown = []
         markdown.append("# Template Checker Findings 🕵️‍♀️")
         if self.failed:
-            markdown.append("❌ some errors were found linting your templates")
+            markdown.append("❌ Some errors were found rendering and linting your templates")
         else:
-            markdown.append("✅ no linting errors were found 🥳")
-        markdown.append("## Linting Results")
+            markdown.append("✅ No linting errors were found 🥳")
+        markdown.append("## Warnings and Errors")
         for checker_result in self.checker_results:
             markdown.append(f"### {checker_result.path}")
             for result in checker_result.linter_results:
@@ -20,12 +20,12 @@ class Summary:
                 elif result.rule.severity == "warning":
                     markdown.append(f" * ⚠️ line {result.linenumber} __{result.rule.shortdesc}__")
                     markdown.append(f"   * {result.message}")
-        markdown.append("## Template Rendering")
+            if result.jinja_errors is not None:
+                markdown.append(f" * ❌ line {result.jinja_errors.lineno} __Jinja parsing exception__")
+                markdown.append(f"   * {result.jinja_errors.message}")                    
+        markdown.append("## Rendered Templates")
         for checker_result in self.checker_results:
-            if checker_result.jinja_errors is not None:
-                markdown.append(f"__{checker_result.path}__")
-                markdown.append(f" ❌ Jinja error on line {checker_result.jinja_errors.lineno} __{checker_result.jinja_errors.message}__")
-            else:
+            if checker_result.rendered_template is not "":
                 markdown.append(f"<details><summary> {checker_result.path} </summary>")
                 markdown.append("")
                 markdown.append("```yaml")
