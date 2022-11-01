@@ -5,11 +5,11 @@ class Summary:
     
     def markdown(self):
         markdown = []
-        markdown.append("# Template Checker Findings 🕵️‍♀️")
+        markdown.append("# Template Checker Findings 🔎")
         if self.failed:
             markdown.append("❌ Some errors were found rendering and linting your templates")
         else:
-            markdown.append("✅ No linting errors were found 🥳")
+            markdown.append("✅ No rendering or linting errors were found 🥳")
         markdown.append("## Warnings and Errors")
         for checker_result in self.checker_results:
             markdown.append(f"### {checker_result.path}")

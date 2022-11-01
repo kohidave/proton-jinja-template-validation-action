@@ -5,15 +5,16 @@ class TemplateDir:
     def is_path_template_dir(path):
         return path.find("/instance_infrastructure/") != -1 or \
                path.find("/pipeline_infrastructure/") != -1 or \
-               path.find("/schema/") != -1 or path.find("/spec/spec.yaml") != -1
+               path.find("/infrastructure/") != -1 or \
+               path.find("/schema/") != -1 or path.find("/spec/") != -1
 
     @staticmethod
     def top_level_template_dir(path):
-        print("Trying to find tld of " + path)
         instance_infra_folder_index  = path.find("/instance_infrastructure/")
         pipeline_infra_folder_index = path.find("/pipeline_infrastructure/")
+        environment_infra_folder_index = path.find("/infrastructure/")
         schema_folder_index = path.find("/schema/")
-        spec_folder_index = path.find("/spec/spec.yaml")
+        spec_folder_index = path.find("/spec/")
 
         if instance_infra_folder_index != -1:
             return path[0:instance_infra_folder_index]
@@ -21,6 +22,8 @@ class TemplateDir:
             return path[0:pipeline_infra_folder_index]     
         if schema_folder_index != -1:
             return path[0:schema_folder_index]     
+        if environment_infra_folder_index != -1:
+            return path[0:environment_infra_folder_index]                 
         if spec_folder_index != -1:
             return path[0:spec_folder_index]
         return ""
