@@ -19,9 +19,33 @@ def print_warning(file_name, line, title, message):
 def print_error(file_name, line, title, message):
     print("::warning file={%s},line={%s},title={%s}::%s" % (file_name, line, title, message))
 
+class CheckerResult:
+    def __init__(self, template_path, linter_results, rendered_template):
+        self.path = template_path
+        self.linter_results = linter_results
+        self.rendered_template = rendered_template
+    
+    def log_rendered_template(self):
+            print_group(self.path, self.rendered_template)
+    
+    def log_linter_findings(self):
+        for result in self.linter_results:
+            if result.rule.severity == "error":
+                print_error(self.path, result.linenumber, result.rule.shortdesc, result.message)
+            elif result.rule.severity == "warning":
+                print_warning(self.path, result.linenumber, result.rule.shortdesc, result.message)                
+   
+    def has_linter_errors(self):
+        for result in self.linter_results:
+            if result.rule.severity == "error":
+                return True
+        return False
+
+
+
 def main():
     failed = False
-    rendered_templates = {}
+    checker_results = []
 
     # First, we fetch all the files that have changed.
     changed_files = os.environ["INPUT_CHANGED_FILES"].split(",")
@@ -39,9 +63,8 @@ def main():
         if schema_for_template_dir.schema_type().is_service:
             # Render and lint the Service Instance template
             rendered_service_instance_cf = renderer.render_service_instance()
-            linting_results.extend(lint_all(rendered_service_instance_cf))
-            print_group(template_dir.instance_infra_path(), rendered_service_instance_cf)
-            rendered_templates[template_dir.instance_infra_path()] = rendered_service_instance_cf
+            checker_result = CheckerResult(template_dir.instance_infra_path(), lint_all(rendered_service_instance_cf), rendered_service_instance_cf)
+            checker_results.append(checker_result)
             # Render and lint the Pipeline template, if it is present.
             #if schema_for_template_dir.schema_type().pipeline_present:
             #    rendered_pipeline_cf = renderer.render_pipeline() 
@@ -50,20 +73,17 @@ def main():
             #    rendered_templates[template_dir.pipeline_infra_path()] = rendered_pipeline_cf
         elif schema_for_template_dir.schema_type().is_env:
             rendered_cloudformation = renderer.render_environment()
-            linting_results.extend(lint_all(rendered_cloudformation))
-            print_group(template_dir.environment_infra_path(), rendered_cloudformation)
-            rendered_templates[template_dir.environment_infra_path()] = rendered_cloudformation
+            checker_result = CheckerResult(template_dir.environment_infra_path(), lint_all(rendered_cloudformation), rendered_cloudformation)
+            checker_results.append(checker_result)
 
-        for result in linting_results:
-            if result.rule.severity == "error":
+        for result in checker_results:
+            result.log_linter_findings()
+            if result.has_linter_errors:
                 failed = True
-                print_error(result.filename, result.linenumber, result.rule.shortdesc, result.message)
-            elif result.rule.severity == "warning":
-                print_warning(result.filename, result.linenumber, result.rule.shortdesc, result.message)                
 
     # Write a summary markdown file so the customer gets a nice view of what happened.
     with open(os.environ["GITHUB_STEP_SUMMARY"], 'w') as f:
-        f.write(Summary(failed, linting_results, rendered_templates).markdown())
+        f.write(Summary(failed, checker_results).markdown())
     if failed:
         sys.exit("Errors detected linting templates")
 
