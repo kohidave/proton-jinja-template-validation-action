@@ -1,0 +1,7 @@
+SNSTopicArn: arn:aws:sns:my-cool-topic
+SNSTopicName: my-cool-topic
+VPCSecurityGroup: daves-cool-security-group
+PrivateSubnet1: subnet-1
+PrivateSubnet2: subnet-2
+PublicSubnet1: public-subnet-1
+PublicSubnet2: public-subnet-2

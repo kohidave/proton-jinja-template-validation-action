@@ -10,7 +10,7 @@ class SchemaType:
             self.pipeline_present =  "pipeline_input_type" in schema["schema"]
         elif "environment_input_type" in schema["schema"]:
             self.template_type = "ENVIRONMENT"
-            self.schema_path = "service_input_type"
+            self.schema_path = "environment_input_type"
             self.is_service = False
             self.is_env = True
             self.pipeline_present = False

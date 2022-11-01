@@ -1,0 +1,12 @@
+ServiceTaskDefExecutionRoleArn: arn:aws:iam::012345678901:role/role-name-with-path
+SNSTopicArn: arn:aws:sns::012345678901:topic/role-name-with-path
+SNSTopicName: my-cool-topic
+VPCSecurityGroup: daves-cool-security-group
+PrivateSubnet1: subnet-1
+PrivateSubnet2: subnet-2
+PublicSubnet1: public-subnet-1
+PublicSubnet2: public-subnet-2
+Cluster: my-cluster
+CloudMapNamespaceId: cluster-name-space
+VPC: 12343-vpc
+SNSRegion: us-west-2

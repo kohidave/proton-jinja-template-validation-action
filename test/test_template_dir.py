@@ -72,42 +72,42 @@ class TestLint(TestCase):
                 len(template_dirs))
             
             generated_template_dir = template_dirs.pop()
-            self.assertEquals(
+            self.assertEqual(
                 "",
                 generated_template_dir.repo_path
             )
-            self.assertEquals(
+            self.assertEqual(
                 "/my-repo/my-service-template/v1/service",
                 generated_template_dir.template_path
             )            
-            self.assertEquals(
+            self.assertEqual(
                 "/my-repo/my-service-template/v1/service",
                 generated_template_dir.path
             )     
 
         def test_template_dir_attributes(self):
             test_template_dir = TemplateDir("", "/my-cool-repo")
-            self.assertEquals(
+            self.assertEqual(
                 "/my-cool-repo/schema/schema.yaml",
                 test_template_dir.schema_path()
             )              
-            self.assertEquals(
+            self.assertEqual(
                 "/my-cool-repo/spec/sample-env-outputs.yaml",
                 test_template_dir.sample_env_output_path()
             )  
-            self.assertEquals(
+            self.assertEqual(
                 "/my-cool-repo/spec/spec.yaml",
                 test_template_dir.sample_spec_path()
             )              
-            self.assertEquals(
+            self.assertEqual(
                 "/my-cool-repo/instance_infrastructure/cloudformation.yaml",
                 test_template_dir.instance_infra_path()
             )                   
-            self.assertEquals(
+            self.assertEqual(
                 "/my-cool-repo/pipeline_infrastructure/cloudformation.yaml",
                 test_template_dir.pipeline_infra_path()
             )             
-            self.assertEquals(
+            self.assertEqual(
                 "/my-cool-repo/infrastructure/cloudformation.yaml",
                 test_template_dir.environment_infra_path()
             )             
