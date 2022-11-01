@@ -32,6 +32,12 @@ class InputProvider:
         sample_spec = self.__read_sample_spec()
         return default_values | sample_spec["spec"]
 
+    def pipeline_render_input(self):
+        return {}
+
+    def environment_render_input(self):
+        return {}
+
     # This method returns the full data required to render
     # a service instance template.
     def service_instance_render_input(self):
