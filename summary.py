@@ -16,13 +16,13 @@ class Summary:
             for result in checker_result.linter_results:
                 if result.rule.severity == "error":
                     markdown.append(f" * ❌ line {result.linenumber} __{result.rule.shortdesc}__")
-                    markdown.append(f"   * {result.message}")
+                    markdown.append(f"   * `{result.message}`")
                 elif result.rule.severity == "warning":
                     markdown.append(f" * ⚠️ line {result.linenumber} __{result.rule.shortdesc}__")
-                    markdown.append(f"   * {result.message}")
+                    markdown.append(f"   * `{result.message}`")
             if checker_result.jinja_errors is not None:
                 markdown.append(f" * ❌ line {checker_result.jinja_errors.lineno} __Jinja parsing exception__")
-                markdown.append(f"   * {checker_result.jinja_errors.message}")                    
+                markdown.append(f"   * `{checker_result.jinja_errors.message}`")                    
         markdown.append("## Rendered Templates")
         for checker_result in self.checker_results:
             if checker_result.rendered_template is not "":
