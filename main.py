@@ -76,7 +76,7 @@ def main():
             # Render and lint the Service Instance template
             try: 
                 rendered_service_instance_cf = renderer.render_service_instance()
-                checker_result = CheckerResult(template_dir.instance_infra_path(), lint_all(rendered_service_instance_cf), [], rendered_service_instance_cf)
+                checker_result = CheckerResult(template_dir.instance_infra_path(), lint_all(rendered_service_instance_cf), None, rendered_service_instance_cf)
                 checker_results.append(checker_result)
             except jinja2.TemplateSyntaxError as exc:
                 checker_results.append(CheckerResult(template_dir.instance_infra_path(), [], JinjaError(exec.message, exec.lineno), ""))
