@@ -1,3 +1,5 @@
+import yaml
+
 class SchemaType:
     def __init__(self, schema):
         if schema["schema"]["service_input_type"] is not None:

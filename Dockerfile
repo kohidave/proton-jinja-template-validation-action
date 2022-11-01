@@ -3,9 +3,7 @@ ADD . /app
 WORKDIR /app
 
 # We are installing a dependency here directly into our app source dir
-RUN pip install --target=/app Jinja2
-RUN pip install --target=/app pyyaml
-RUN pip install --target=/app cfn-lint
+RUN pip install -r requirements.txt --target=/app 
 
 ENV PYTHONPATH /app
 CMD [ "python", "/app/main.py" ]
