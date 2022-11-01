@@ -77,7 +77,7 @@ def main():
 
         for result in checker_results:
             result.log_linter_findings()
-            if result.has_linter_errors:
+            if result.has_linter_errors():
                 failed = True
 
     # Write a summary markdown file so the customer gets a nice view of what happened.
