@@ -3,6 +3,7 @@ from pprint import pprint
 import sys
 from tokenize import group
 from cfnlint.api import lint_all
+from summary import Summary
 from template_checker.render import Renderer
 from template_checker.schema_reader import SchemaReader
 from template_checker.template_dir import TemplateDir
