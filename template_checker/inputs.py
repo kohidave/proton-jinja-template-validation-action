@@ -3,8 +3,8 @@ import yaml
 # Generates the inputs needed to render the template using the sample
 # specs and the schema defaults.
 class InputProvider:
-    def __init__(self, templateDir, schema_reader):
-        self.templateDir = templateDir
+    def __init__(self, tmpl_dir, schema_reader):
+        self.template_dir = tmpl_dir
         self.schema_reader = schema_reader
 
     def sample_env_outputs(self):
