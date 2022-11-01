@@ -21,7 +21,9 @@ class Summary:
         for path in self.rendered_templates_by_path:
             markdown.append(f"<details><summary> {path} </summary>")
             markdown.append("```yaml")
+            markdown.append("")
             markdown.extend(self.rendered_templates_by_path[path].splitlines())
+            markdown.append("")
             markdown.append("```")
             markdown.append("</detail>")
         return "\n".join(markdown)

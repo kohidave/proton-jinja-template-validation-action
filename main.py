@@ -14,10 +14,10 @@ def print_group(group_name, content):
     print("::endgroup::")
 
 def print_warning(file_name, line, title, message):
-    print("::warning file={%s},line={%s},title={%s}::{%s}" % (file_name, line, title, message))
+    print("::warning file={%s},line={%s},title={%s}::%s" % (file_name, line, title, message))
 
 def print_error(file_name, line, title, message):
-    print("::warning file={%s},line={%s},title={%s}::{%s}" % (file_name, line, title, message))
+    print("::warning file={%s},line={%s},title={%s}::%s" % (file_name, line, title, message))
 
 def main():
     failed = False
