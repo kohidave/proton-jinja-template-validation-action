@@ -47,24 +47,31 @@ class SchemaReader:
     # We'll merge these default values with the values provided by the customer
     # in the sample spec. 
     def schema_defaults(self):
-        schema = self.__read_schema()
-        schema_type = self.schema_type()
-        schema_input_type_name = schema["schema"][schema_type.schema_path]
-        schema_parameters = schema["schema"]["types"][schema_input_type_name]["properties"]
-        property_defaults = {}
-        for property, definition in schema_parameters.items():
-            # TODO make this case insensitive
-            if ("default" in definition): 
-                property_defaults[property] = definition["default"]
-        return property_defaults    
+        try:
+            schema = self.__read_schema()
+            schema_type = self.schema_type()
+            schema_input_type_name = schema["schema"][schema_type.schema_path]
+            schema_parameters = schema["schema"]["types"][schema_input_type_name]["properties"]
+            property_defaults = {}
+            for property, definition in schema_parameters.items():
+                # TODO make this case insensitive
+                if ("default" in definition): 
+                    property_defaults[property] = definition["default"]
+            return property_defaults    
+        except Exception as e:
+            raise Exception("Error reading from the schema file (make sure your schema is valid): " + str(e))
+
 
     def pipeline_schema_defaults(self):
-        schema = self.__read_schema()
-        schema_input_type_name = schema["schema"]["pipeline_input_type"]
-        schema_parameters = schema["schema"]["types"][schema_input_type_name]["properties"]
-        property_defaults = {}
-        for property, definition in schema_parameters.items():
-            # TODO make this case insensitive
-            if ("default" in definition): 
-                property_defaults[property] = definition["default"]
-        return property_defaults    
+        try:
+            schema = self.__read_schema()
+            schema_input_type_name = schema["schema"]["pipeline_input_type"]
+            schema_parameters = schema["schema"]["types"][schema_input_type_name]["properties"]
+            property_defaults = {}
+            for property, definition in schema_parameters.items():
+                # TODO make this case insensitive
+                if ("default" in definition): 
+                    property_defaults[property] = definition["default"]
+            return property_defaults    
+        except Exception as e:
+            raise Exception("Error reading from the schema file (make sure your schema is valid): " + str(e))
