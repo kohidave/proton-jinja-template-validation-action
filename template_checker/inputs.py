@@ -37,6 +37,8 @@ class InputProvider:
             # Rename the instance values in the spec as "input" and
             # merge the spec's default values in.
             instance["input"] = default_values | instance["spec"]
+            # TODO support service outputs
+            instance["outputs"] = {}
             instance.pop('spec', None)
         return sample_spec
 

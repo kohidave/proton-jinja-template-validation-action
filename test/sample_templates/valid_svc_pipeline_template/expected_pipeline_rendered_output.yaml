@@ -29,9 +29,9 @@ Resources:
                 - /*
             Principal:
               AWS:
-                {% for service_instance in service_instances %}
-                - "arn:aws:iam::{{service_instance.environment.account_id}}:root"
-                {% endfor %}
+                
+                - "arn:aws:iam::11111111:root"
+                
   BuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -48,7 +48,7 @@ Resources:
           Value: !Ref FunctionBucket
         - Name: service_name
           Type: PLAINTEXT
-          Value: '{{service.name}}'
+          Value: 'sample-service'
       ServiceRole:
         Fn::GetAtt:
           - PublishRole
@@ -71,13 +71,13 @@ Resources:
                     },
                     "pre_build": {
                       "commands": [
-                        "cd $CODEBUILD_SRC_DIR/{{pipeline.inputs.code_dir}}",
-                        "{{ pipeline.inputs.unit_test_command }}"
+                        "cd $CODEBUILD_SRC_DIR/lambda-ping-sns",
+                        "make test"
                       ]
                     },
                     "build": {
                       "commands": [
-                        "{{ pipeline.inputs.packaging_command }}",
+                        "zip function.zip app.js",
                         "FUNCTION_URI=s3://$bucket_name/$CODEBUILD_BUILD_NUMBER/function.zip",
                         "aws s3 cp function.zip $FUNCTION_URI"
                       ]
@@ -91,7 +91,7 @@ Resources:
                   },
                   "artifacts": {
                     "files": [
-                      "{{pipeline.inputs.code_dir}}/rendered_service.yaml"
+                      "lambda-ping-sns/rendered_service.yaml"
                     ]
                   }
                 }
@@ -100,8 +100,8 @@ Resources:
         Fn::GetAtt:
           - PipelineArtifactsBucketEncryptionKey
           - Arn
-{% for service_instance in service_instances %}
-  Deploy{{loop.index}}Project:
+
+  Deploy1Project:
     Type: AWS::CodeBuild::Project
     Properties:
       Artifacts:
@@ -114,10 +114,10 @@ Resources:
         EnvironmentVariables:
         - Name: service_name
           Type: PLAINTEXT
-          Value:  '{{service.name}}'
+          Value:  'sample-service'
         - Name: service_instance_name
           Type: PLAINTEXT
-          Value: '{{service_instance.name}}'
+          Value: 'front-end'
       ServiceRole:
         Fn::GetAtt:
           - DeploymentRole
@@ -130,7 +130,7 @@ Resources:
               "build": {
                 "commands": [
                   "pip3 install --upgrade --user awscli",
-                  "aws proton --region $AWS_DEFAULT_REGION update-service-instance --deployment-type CURRENT_VERSION --name $service_instance_name --service-name $service_name --spec file://{{pipeline.inputs.code_dir}}/rendered_service.yaml",
+                  "aws proton --region $AWS_DEFAULT_REGION update-service-instance --deployment-type CURRENT_VERSION --name $service_instance_name --service-name $service_name --spec file://lambda-ping-sns/rendered_service.yaml",
                   "aws proton --region $AWS_DEFAULT_REGION wait service-instance-deployed --name $service_instance_name --service-name $service_name"
                 ]
               }
@@ -141,7 +141,7 @@ Resources:
         Fn::GetAtt:
           - PipelineArtifactsBucketEncryptionKey
           - Arn
-{% endfor %}
+
   # This role is used to build and publish the lambda function to S3
   PublishRole:
     Type: AWS::IAM::Role
@@ -460,7 +460,7 @@ Resources:
   PipelineArtifactsBucketEncryptionKeyAlias:
     Type: AWS::KMS::Alias
     Properties:
-      AliasName: 'alias/codepipeline-encryption-key-{{ service.name }}'
+      AliasName: 'alias/codepipeline-encryption-key-sample-service'
       TargetKeyId:
         Fn::GetAtt:
           - PipelineArtifactsBucketEncryptionKey
@@ -546,9 +546,9 @@ Resources:
                 Provider: CodeStarSourceConnection
                 Version: "1"
               Configuration:
-                ConnectionArn: '{{ service.repository_connection_arn }}'
-                FullRepositoryId: '{{ service.repository_id }}'
-                BranchName: '{{ service.branch_name }}'
+                ConnectionArn: 'arn:connection:dummy'
+                FullRepositoryId: 'github/sample-repo'
+                BranchName: 'main'
               Name: Checkout
               OutputArtifacts:
                 - Name: Artifact_Source_Checkout
@@ -573,7 +573,7 @@ Resources:
                   - PipelineBuildCodePipelineActionRole
                   - Arn
               RunOrder: 1
-          Name: Build {%- for service_instance in service_instances %}
+          Name: Build
         - Actions:
             - ActionTypeId:
                 Category: Build
@@ -582,7 +582,7 @@ Resources:
                 Version: "1"
               Configuration:
                 ProjectName:
-                  Ref: Deploy{{loop.index}}Project
+                  Ref: Deploy1Project
               InputArtifacts:
                 - Name: BuildOutput
               Name: Deploy
@@ -591,8 +591,7 @@ Resources:
                   - PipelineDeployCodePipelineActionRole
                   - Arn
               RunOrder: 1
-          Name: 'Deploy{{service_instance.name}}'
-{%- endfor %}
+          Name: 'Deployfront-end'
       ArtifactStore:
         EncryptionKey:
           Id:
