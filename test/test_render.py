@@ -4,7 +4,7 @@ from template_checker.schema_reader import SchemaReader
 from template_checker.template_dir import TemplateDir
 from pathlib import Path
 
-class TestLint(TestCase):
+class TestRender(TestCase):
     def test_service_instance_render(self):
         sample_template = TemplateDir("", "test/sample_templates/valid_svc_template")
         reader = SchemaReader(sample_template)
@@ -29,8 +29,6 @@ class TestLint(TestCase):
         sample_template = TemplateDir("", "test/sample_templates/valid_env_template")
         reader = SchemaReader(sample_template)
         renderer = Renderer(sample_template, reader)
-        with open('test/sample_templates/valid_env_template/expected_rendered_output.yaml', 'w') as f:
-            f.write(renderer.render_environment())
         expected_output = Path('test/sample_templates/valid_env_template/expected_rendered_output.yaml').read_text()
         self.assertEqual(
             expected_output,  

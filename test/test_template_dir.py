@@ -1,7 +1,7 @@
 from unittest import TestCase
 from template_checker.template_dir import TemplateDir
 
-class TestLint(TestCase):
+class TestTemplateDir(TestCase):
 
         # Ensure that we can determine if a file path is part of a template directory.
         def test_is_path_template_dir_valid_paths(self):

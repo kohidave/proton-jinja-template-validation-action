@@ -54,16 +54,8 @@ class CheckerResult:
             return True 
         return False
 
-
-def main():
-    failed = False
+def get_checker_results(template_dirs):
     checker_results = []
-
-    # First, we fetch all the files that have changed.
-    changed_files = os.environ["INPUT_CHANGED_FILES"].split(",")
-    # Next, we filter those files to a set of unique template directories.
-    template_dirs = TemplateDir.from_paths(changed_files)
-
     # Go through each template directory that had some change in it,
     # render it using the sample specs provided, and then lint 
     # the rendered templates. 
@@ -78,10 +70,13 @@ def main():
                 rendered_service_instance_cf = renderer.render_service_instance()
                 checker_result = CheckerResult(template_dir.instance_infra_path(), lint_all(rendered_service_instance_cf), None, rendered_service_instance_cf)
                 checker_results.append(checker_result)
-            except jinja2.TemplateSyntaxError as exc:
-                checker_results.append(CheckerResult(template_dir.instance_infra_path(), [], JinjaError(exec.message, exec.lineno), ""))
-            except jinja2.TemplateError as exc:
-                checker_results.append(CheckerResult(template_dir.instance_infra_path(), [], JinjaError(exec.message, -1), ""))
+            except jinja2.exceptions.TemplateSyntaxError as exc:
+                checker_results.append(CheckerResult(template_dir.instance_infra_path(), [], JinjaError(exc.message, exc.lineno), ""))
+            except jinja2.exceptions.TemplateError as exc:
+                lineno = -1
+                if hasattr(exc, 'lineno') and exc.lineno is not None:
+                    lineno = exc.lineno
+                checker_results.append(CheckerResult(template_dir.instance_infra_path(), [], JinjaError(exc.message, lineno), ""))
 
 
             # Render and lint the Pipeline template, if it is present.
@@ -95,12 +90,23 @@ def main():
                 checker_results.append(CheckerResult(template_dir.instance_infra_path(), [], JinjaError(exec.message, exec.lineno), ""))
             except jinja2.TemplateError as exc:
                 checker_results.append(CheckerResult(template_dir.instance_infra_path(), [], JinjaError(exec.message, -1), ""))
+    return checker_results
 
 
-        for result in checker_results:
-            result.log_findings()
-            if result.has_errors():
-                failed = True
+def main():
+    failed = False
+
+    # First, we fetch all the files that have changed.
+    changed_files = os.environ["INPUT_CHANGED_FILES"].split(",")
+    # Next, we filter those files to a set of unique template directories.
+    template_dirs = TemplateDir.from_paths(changed_files)
+    
+    checker_results = get_checker_results(template_dirs)
+
+    for result in checker_results:
+        result.log_findings()
+        if result.has_errors():
+            failed = True
 
     # Write a summary markdown file so the customer gets a nice view of what happened.
     with open(os.environ["GITHUB_STEP_SUMMARY"], 'w') as f:

@@ -3,7 +3,7 @@ from template_checker.inputs import InputProvider
 from template_checker.schema_reader import SchemaReader
 from template_checker.template_dir import TemplateDir
 
-class TestLint(TestCase):
+class TestInputs(TestCase):
     def test_service_instance_input(self):
         sample_template = TemplateDir("", "test/sample_templates/valid_svc_template")
         reader = SchemaReader(sample_template)
