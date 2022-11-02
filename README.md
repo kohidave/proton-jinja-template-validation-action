@@ -19,7 +19,7 @@ spec/sample-env-outputs.yaml [only for service templates]
 
 The `spec.yaml` file needs to contain a valid spec for the template it's a part of. These values will be used to render the template.
 
-The `sample-env-outputs.yaml` is a simple yaml file which contains a list of key/values to emulate environment outputs. This is only needed for service templates.
+The `sample-outputs.yaml` is a simple yaml file which contains a list of key/values to emulate environment and service outputs. This is only needed for service templates (service instances and pipelines).
 
 
 
@@ -33,21 +33,22 @@ on:
   pull_request:
     branches: [ "main" ]
 jobs:
-  build:
+  TemplateChecker:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@main
-    # This is important as it let's the Validate action detect which templates have changed
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     - name: Get changed files
       id: changed-files
-      uses: tj-actions/changed-files@v29.0.0
+      uses: tj-actions/changed-files@v34
       with:
         separator: ","
-    - name: Validate changed templates
+    - name: Run action
+      # Put your action repo here
       uses: kohidave/proton-jinja-template-validation-action@main
       with: 
         changed_files: "${{steps.changed-files.outputs.all_changed_files}}"
-
 ```
 
 ### Schema files and spec directory layout
@@ -62,21 +63,24 @@ In order to render your template, this action expects a `spec/` directory in the
 /my-template/schema/schema.yaml
 /my-template/spec/
 /my-template/spec/spec.yaml                 # This is a real life spec, filled out. This is used to emulate a developer spec
-/my-template/spec/sample-env-outputs.yaml   # This file contains a key value yaml of sample environment outputs [service templates only]
+/my-template/spec/sample-outputs.yaml       # This file contains a key value yaml of sample environment and service outputs [service templates only]
 ```
 
-#### `sample-env-outputs.yaml` file
+#### `sample-outputs.yaml` file
 
-An example `sample-env-outputs.yaml` might look like this:
+An example `sample-outputs.yaml` might look like this:
 
 ```yaml
-SNSTopicArn: arn:aws:sns:my-cool-topic
-SNSTopicName: my-cool-topic
-VPCSecurityGroup: daves-cool-security-group
-PrivateSubnet1: subnet-1
-PrivateSubnet2: subnet-2
-PublicSubnet1: public-subnet-1
-PublicSubnet2: public-subnet-2
+environment:
+  SNSTopicArn: arn:aws:sns:my-cool-topic
+  SNSTopicName: my-cool-topic
+  VPCSecurityGroup: daves-cool-security-group
+  PrivateSubnet1: subnet-1
+  PrivateSubnet2: subnet-2
+  PublicSubnet1: public-subnet-1
+  PublicSubnet2: public-subnet-2
+service:
+  LambdaRuntime: ruby2.7
 ```
 
 This will be used to fill in the values in your service template like:
@@ -102,11 +106,37 @@ VpcConfig:
   {% endif %}
 ```
 
+And your pipeline template like this:
+
+```yaml
+Environment:
+  Variables:
+    Runtime: '{{service_instances[0].outputs.LambdaRuntime}}'
+```
+
+The service and environment outputs will be used for every service instance and environment in your template. 
 
 ## Limitations
 
 This is currently a work-in-progress, here are some things we don't currently support:
 
-1. Environment templates
-2. Pipeline templates
-3. Components 
+1. Components 
+2. Schemas defining `default` values must use a lower-cased `default`. 
+3. Error handling when a sample output is not available to template has somewhat cryptic error messaging. 
+
+## CFN Lint Errors
+
+By default, this action will run all CFN Lint rules for all regions. If this is not what you want, you can add [CFN Overrides](https://github.com/aws-cloudformation/cfn-lint#template-based-metadata) to your template. 
+
+As an example:
+
+```
+Metadata:
+  cfn-lint:
+    config:
+      regions:
+        - us-east-1
+        - us-east-2
+      ignore_checks:
+        - E2530
+```        
