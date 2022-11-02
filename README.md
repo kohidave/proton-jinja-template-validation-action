@@ -14,7 +14,7 @@ To use this action, you have to provide a _few_ additional files in your templat
 
 ```
 spec/spec.yaml
-spec/sample-env-outputs.yaml [only for service templates]
+spec/sample-outputs.yaml [only for service templates]
 ```
 
 The `spec.yaml` file needs to contain a valid spec for the template it's a part of. These values will be used to render the template.
@@ -53,7 +53,7 @@ jobs:
 
 ### Schema files and spec directory layout
 
-In order to render your template, this action expects a `spec/` directory in the template bundle with a sample `spec.yaml` and an `sample-env-outputs.yaml` (for Service Templates). Here's an example layout:
+In order to render your template, this action expects a `spec/` directory in the template bundle with a sample `spec.yaml` and an `sample-outputs.yaml` (for Service Templates). Here's an example layout:
 
 
 ```

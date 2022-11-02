@@ -11,7 +11,7 @@ class TestLint(TestCase):
             "/my-repo/my-env-template/v1/infrastructure/cloudformation.yaml",
             "/my-repo/my-env-template/v1/schema/schema.yaml",
             "/my-repo/my-env-template/v1/spec/spec.yaml",
-            "/my-repo/my-svc-template/v1/spec/sample-env-outputs.yaml",
+            "/my-repo/my-svc-template/v1/spec/sample-outputs.yaml",
             "/my-repo/my-svc-template/v1/spec/env-spec.yaml"]
 
             for path in valid_paths:
@@ -34,7 +34,7 @@ class TestLint(TestCase):
             "/my-repo/my-cool-template/v1/infrastructure/cloudformation.yaml",
             "/my-repo/my-cool-template/v1/schema/schema.yaml",
             "/my-repo/my-cool-template/v1/spec/spec.yaml",
-            "/my-repo/my-cool-template/v1/spec/sample-env-outputs.yaml",
+            "/my-repo/my-cool-template/v1/spec/sample-outputs.yaml",
             "/my-repo/my-cool-template/v1/spec/env-spec.yaml"]            
             for path in valid_paths:
                 self.assertEqual(
@@ -50,7 +50,7 @@ class TestLint(TestCase):
             "/my-repo/my-env-template/v1/infrastructure/cloudformation.yaml",
             "/my-repo/my-env-template/v1/schema/schema.yaml",
             "/my-repo/my-env-template/v1/spec/spec.yaml",
-            "/my-repo/my-svc-template/v1/spec/sample-env-outputs.yaml",
+            "/my-repo/my-svc-template/v1/spec/sample-outputs.yaml",
             "/my-repo/my-svc-template/v1/spec/env-spec.yaml",
             "/my-cool-dir/favorite_services.txt" # Make sure we throw in some extra paths
             ]            
