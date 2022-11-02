@@ -51,3 +51,14 @@ class TestChecker(TestCase):
         checker_result = checker_results[0]
         self.assertTrue(checker_result.has_errors())        
         self.assertEqual(expected_rendered_template, checker_result.rendered_template)
+
+    def test_checker_handles_template_invalid_bundle(self):
+        sample_template = TemplateDir("", "test/sample_templates/invalid_template_bundle")
+        checker_results = get_checker_results([sample_template])
+        self.assertEqual(
+            1,
+            len(checker_results))
+        checker_result = checker_results[0]
+        self.assertTrue(checker_result.has_errors())       
+        self.assertEqual("[Errno 2] No such file or directory: 'test/sample_templates/invalid_template_bundle/schema/schema.yaml'", checker_result.unknown_error)        
+
