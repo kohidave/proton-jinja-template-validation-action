@@ -31,12 +31,14 @@ class SchemaReader:
 
         # Open the schema file for this template directory, 
         # read the YAML and return the values.             
-        with open(self.templateDir.schema_path(), "r") as schemaStream:
-            try:
+        try:
+            with open(self.templateDir.schema_path(), "r") as schemaStream:
                 self.schema = yaml.safe_load(schemaStream)
+                if self.schema is None:
+                    raise Exception("The schema file has no content")
                 return self.schema
-            except yaml.YAMLError as exc:
-                raise Exception("Schema YAML is invalid: " + str(exc))
+        except yaml.YAMLError as exc:
+            raise Exception("Schema YAML is invalid: " + str(exc))
 
     def schema_type(self):
         try:
