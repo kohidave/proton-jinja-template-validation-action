@@ -28,7 +28,7 @@ class Summary:
 
         markdown.append("## Rendered Templates")
         for checker_result in self.checker_results:
-            if checker_result.rendered_template is not "":
+            if checker_result.rendered_template != "":
                 markdown.append(f"<details><summary> {checker_result.path} </summary>")
                 markdown.append("")
                 markdown.append("```yaml")
