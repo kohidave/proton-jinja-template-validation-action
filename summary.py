@@ -35,4 +35,5 @@ class Summary:
                 markdown.append(checker_result.rendered_template)
                 markdown.append("```")
                 markdown.append("</detail>")
+                markdown.append("")
         return "\n".join(markdown)
