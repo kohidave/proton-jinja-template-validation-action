@@ -45,8 +45,8 @@ class TemplateDir:
     def schema_path(self):
        return self.path + "/schema/schema.yaml"
 
-    def sample_env_output_path(self):
-       return self.path + "/spec/sample-env-outputs.yaml"
+    def sample_outputs_path(self):
+        return self.path + "/spec/sample-outputs.yaml"
 
     def sample_spec_path(self):
         return self.path + "/spec/spec.yaml"

@@ -1,5 +1,3 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: Simple Pipeline
 Resources:
   FunctionBucket:
     Type: AWS::S3::Bucket
@@ -59,7 +57,7 @@ Resources:
                   "version": "0.2",
                   "phases": {
                     "install": {
-                      "runtime-versions": "ruby2.7",
+                      "runtime-versions": {"ruby": "2.7"},
                       "commands": [
                         "pip3 install --upgrade --user awscli",
                         "echo 'f6bd1536a743ab170b35c94ed4c7c4479763356bd543af5d391122f4af852460  yq_linux_amd64' > yq_linux_amd64.sha",

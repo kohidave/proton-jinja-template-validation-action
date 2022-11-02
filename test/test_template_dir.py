@@ -92,8 +92,8 @@ class TestLint(TestCase):
                 test_template_dir.schema_path()
             )              
             self.assertEqual(
-                "/my-cool-repo/spec/sample-env-outputs.yaml",
-                test_template_dir.sample_env_output_path()
+                "/my-cool-repo/spec/sample-outputs.yaml",
+                test_template_dir.sample_outputs_path()
             )  
             self.assertEqual(
                 "/my-cool-repo/spec/spec.yaml",

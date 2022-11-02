@@ -29,6 +29,8 @@ class TestLint(TestCase):
         sample_template = TemplateDir("", "test/sample_templates/valid_env_template")
         reader = SchemaReader(sample_template)
         renderer = Renderer(sample_template, reader)
+        with open('test/sample_templates/valid_env_template/expected_rendered_output.yaml', 'w') as f:
+            f.write(renderer.render_environment())
         expected_output = Path('test/sample_templates/valid_env_template/expected_rendered_output.yaml').read_text()
         self.assertEqual(
             expected_output,  

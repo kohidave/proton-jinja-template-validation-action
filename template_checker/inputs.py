@@ -8,8 +8,18 @@ class InputProvider:
         self.schema_reader = schema_reader
 
     def __sample_env_outputs(self):
-        with open(self.template_dir.sample_env_output_path() , "r") as envOutputsStream:
-            return yaml.safe_load(envOutputsStream)
+        with open(self.template_dir.sample_outputs_path() , "r") as sampleOutputsStream:
+            sample_outputs = yaml.safe_load(sampleOutputsStream)
+            if "environment" not in sample_outputs:
+                return {}
+            return sample_outputs["environment"]
+
+    def __sample_svc_outputs(self):
+        with open(self.template_dir.sample_outputs_path() , "r") as sampleOutputsStream:
+            sample_outputs = yaml.safe_load(sampleOutputsStream)
+            if "service" not in sample_outputs:
+                return {}
+            return sample_outputs["service"]
 
     def __read_sample_spec(self):
         with open(self.template_dir.sample_spec_path() , "r") as specOutputStream:
@@ -37,8 +47,7 @@ class InputProvider:
             # Rename the instance values in the spec as "input" and
             # merge the spec's default values in.
             instance["input"] = default_values | instance["spec"]
-            # TODO support service outputs
-            instance["outputs"] = {}
+            instance["outputs"] = self.__sample_svc_outputs()
             instance.pop('spec', None)
         return sample_spec
 
