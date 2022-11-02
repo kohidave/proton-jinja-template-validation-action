@@ -1,4 +1,5 @@
 import yaml
+from pathlib import Path
 
 # Generates the inputs needed to render the template using the sample
 # specs and the schema defaults.
@@ -7,14 +8,20 @@ class InputProvider:
         self.template_dir = tmpl_dir
         self.schema_reader = schema_reader
 
-    def __sample_env_outputs(self):
+    def sample_env_outputs(self):
+        if not Path(self.template_dir.sample_outputs_path()).exists():
+            return {}
+
         with open(self.template_dir.sample_outputs_path() , "r") as sampleOutputsStream:
             sample_outputs = yaml.safe_load(sampleOutputsStream)
             if "environment" not in sample_outputs:
                 return {}
             return sample_outputs["environment"]
 
-    def __sample_svc_outputs(self):
+    def sample_svc_outputs(self):
+        if not Path(self.template_dir.sample_outputs_path()).exists():
+            return {}
+        
         with open(self.template_dir.sample_outputs_path() , "r") as sampleOutputsStream:
             sample_outputs = yaml.safe_load(sampleOutputsStream)
             if "service" not in sample_outputs:
@@ -42,12 +49,12 @@ class InputProvider:
             instance["environment"] = {
                     "name": env_name,
                     "account_id": "11111111",
-                    "outputs": self.__sample_env_outputs()
+                    "outputs": self.sample_env_outputs()
             }
             # Rename the instance values in the spec as "input" and
             # merge the spec's default values in.
             instance["input"] = default_values | instance["spec"]
-            instance["outputs"] = self.__sample_svc_outputs()
+            instance["outputs"] = self.sample_svc_outputs()
             instance.pop('spec', None)
         return sample_spec
 
@@ -101,7 +108,7 @@ class InputProvider:
             "environment": {
                 "name": service_instance_config['environment'],
                 "account_id": "1111111111",
-                "outputs" : self.__sample_env_outputs()},
+                "outputs" : self.sample_env_outputs()},
             "service": {
                 "name": "sample-service",
                 "branch_name": "main",
