@@ -27,13 +27,13 @@ class Summary:
                 markdown.append(f" * 🔴 {checker_result.unknown_error}")
 
         markdown.append("## Rendered Templates")
+
         for checker_result in self.checker_results:
-            if checker_result.rendered_template != "":
-                markdown.append(f"<details><summary> {checker_result.path} </summary>")
-                markdown.append("")
-                markdown.append("```yaml")
-                markdown.append(checker_result.rendered_template)
-                markdown.append("```")
-                markdown.append("</detail>")
-                markdown.append("")
+            markdown.append(f"<details><summary> {checker_result.path} </summary>")
+            markdown.append("")
+            markdown.append("```yaml")
+            markdown.append(checker_result.rendered_template)
+            markdown.append("```")
+            markdown.append("</detail>")
+            markdown.append("")
         return "\n".join(markdown)
