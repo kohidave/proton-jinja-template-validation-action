@@ -7,7 +7,7 @@ class InputProvider:
         self.template_dir = tmpl_dir
         self.schema_reader = schema_reader
 
-    def sample_env_outputs(self):
+    def __sample_env_outputs(self):
         with open(self.template_dir.sample_env_output_path() , "r") as envOutputsStream:
             return yaml.safe_load(envOutputsStream)
 
@@ -50,7 +50,7 @@ class InputProvider:
             "environment": {
                 "name": service_instance_config['environment'],
                 "account_id": "1111111111",
-                "outputs" : self.sample_env_outputs()},
+                "outputs" : self.__sample_env_outputs()},
             "service": {
                 "name": "sample-service",
                 "branch_name": "main",
