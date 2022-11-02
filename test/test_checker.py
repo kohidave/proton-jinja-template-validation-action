@@ -70,5 +70,5 @@ class TestChecker(TestCase):
             len(checker_results))
         checker_result = checker_results[0]
         self.assertTrue(checker_result.has_errors())       
-        self.assertEqual("[Errno 2] No such file or directory: 'test/sample_templates/invalid_template_bundle/schema/schema.yaml'", checker_result.unknown_error)        
+        self.assertEqual("Error reading the schema file: [Errno 2] No such file or directory: 'test/sample_templates/invalid_template_bundle/schema/schema.yaml'", checker_result.unknown_error)        
 

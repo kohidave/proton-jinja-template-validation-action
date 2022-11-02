@@ -15,7 +15,7 @@ class SchemaType:
             self.is_env = True
             self.pipeline_present = False
         else:
-            raise "Neither service nor environment input types were defined in the schema" 
+            raise Exception("Neither service nor environment input types were defined in the schema")
 
 class SchemaReader:
     def __init__(self, templateDir):
@@ -34,11 +34,14 @@ class SchemaReader:
                 self.schema = yaml.safe_load(schemaStream)
                 return self.schema
             except yaml.YAMLError as exc:
-                print(exc)   
+                raise Exception("Schema YAML is invalid: " + str(exc))
 
     def schema_type(self):
-        schema = self.__read_schema()
-        return SchemaType(schema)     
+        try:
+            schema = self.__read_schema()
+            return SchemaType(schema)     
+        except Exception as e:
+            raise Exception("Error reading the schema file: " + str(e))
 
     # Some values in the customer authored schema have default values.
     # We'll merge these default values with the values provided by the customer

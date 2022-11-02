@@ -71,7 +71,7 @@ class InputProvider:
     def pipeline_render_input(self):
         service_instance_inputs = self.service_instance_input_for_pipeline()
         if ('instances' not in service_instance_inputs or len(service_instance_inputs['instances']) == 0): 
-            raise "You must provide at least one service instance input in the sample spec"
+            raise Exception("You must provide at least one service instance input in the sample spec")
 
         service_instances = service_instance_inputs['instances']
 
@@ -101,7 +101,7 @@ class InputProvider:
     def service_instance_render_input(self):
         service_instance_inputs = self.service_instance_input()
         if ('instances' not in service_instance_inputs or len(service_instance_inputs['instances']) == 0): 
-            raise "You must provide at least one service instance input in the sample spec"
+            raise Exception("You must provide at least one service instance input in the sample spec")
 
         service_instance_config = service_instance_inputs['instances'][0]
         return {
