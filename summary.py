@@ -18,7 +18,7 @@ class Summary:
             markdown.append("```yaml")
             markdown.append(checker_result.rendered_template)
             markdown.append("```")
-            markdown.append("</detail>")
+            markdown.append("</details>")
             markdown.append("")
 
             for result in checker_result.linter_results:
