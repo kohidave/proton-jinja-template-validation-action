@@ -77,6 +77,6 @@ class TestLint(TestCase):
         sample_template = TemplateDir("", "test/sample_templates/valid_env_template")
         reader = SchemaReader(sample_template)
         self.assertEqual(
-            {'vpc_cidr': '10.0.0.0/16', 'subnet_one_cidr': '10.0.0.0/24', 'subnet_two_cidr': '10.0.1.0/24'},
+            {'vpc_cidr': '10.0.0.0/16', 'public_subnet_one_cidr': '10.0.0.0/18', 'public_subnet_two_cidr': '10.0.64.0/18', 'private_subnet_one_cidr': '10.0.128.0/18', 'private_subnet_two_cidr': '10.0.192.0/18'},
             reader.schema_defaults()
         )
