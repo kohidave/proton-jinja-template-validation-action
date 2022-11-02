@@ -2,6 +2,8 @@ import yaml
 
 class SchemaType:
     def __init__(self, schema):
+        if "schema" not in schema:
+            raise Exception("Schema is missing top level schema element")
         if "service_input_type" in schema["schema"]:
             self.template_type = "SERVICE"
             self.schema_path = "service_input_type"
