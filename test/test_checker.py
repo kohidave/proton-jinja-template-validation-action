@@ -16,7 +16,6 @@ class TestChecker(TestCase):
         self.assertEqual(31, checker_result.jinja_errors.lineno)
         self.assertTrue(checker_result.has_errors)
 
-
     def test_checker_handles_jinja_error(self):
         sample_template = TemplateDir("", "test/sample_templates/invalid_jinja_template")
         checker_results = get_checker_results([sample_template])
@@ -51,7 +50,6 @@ class TestChecker(TestCase):
         svc_result = checker_results[0]
         pipeline_result = checker_results[1]
         self.assertEqual(expected_rendered_template, pipeline_result.rendered_template)
-
 
     def test_checker_handles_template_with_linting_error(self):
         sample_template = TemplateDir("", "test/sample_templates/valid_env_template")
