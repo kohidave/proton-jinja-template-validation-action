@@ -9,7 +9,6 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: "3.7"
-
       - uses: actions/checkout@v1
       - name: Get changed files
         id: changed-files
@@ -22,10 +21,3 @@ jobs:
         run: |
           pip install flake8
           flake8 main.py
-      - name: Setup Cloud Formation Linter with Latest Version
-        uses: scottbrenner/cfn-lint-action@v2
-
-      - name: Print the Cloud Formation Linter Version & run Linter.
-        run: |
-          cfn-lint --version
-          cfn-lint -t ./template.yml
