@@ -12,15 +12,6 @@ class Summary:
             markdown.append("✅ No rendering or linting errors were found 🥳")
         markdown.append("## Warnings and Errors")
         for checker_result in self.checker_results:
-            markdown.append(f"### {checker_result.path}")
-            markdown.append(f"<details><summary> View rendered template </summary>")
-            markdown.append("")
-            markdown.append("```yaml")
-            markdown.append(checker_result.rendered_template)
-            markdown.append("```")
-            markdown.append("</details>")
-            markdown.append("")
-
             for result in checker_result.linter_results:
                 if result.rule.severity == "error":
                     markdown.append(f" * 🔴 line {result.linenumber} __{result.rule.shortdesc}__")
@@ -33,4 +24,13 @@ class Summary:
                 markdown.append(f"   * `{checker_result.jinja_errors.message}`")
             if checker_result.unknown_error != "":
                 markdown.append(f" * 🔴 {checker_result.unknown_error}")
+            if checker_result.rendered_template != "":
+                markdown.append(f"### {checker_result.path}")
+                markdown.append(f"<details><summary> View rendered template </summary>")
+                markdown.append("")
+                markdown.append("```yaml")
+                markdown.append(checker_result.rendered_template)
+                markdown.append("```")
+                markdown.append("</details>")
+                markdown.append("")                
         return "\n".join(markdown)
