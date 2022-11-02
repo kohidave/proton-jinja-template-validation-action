@@ -1,7 +1,8 @@
 import os
 import sys
 from tokenize import group
-from cfnlint.api import lint_all
+from cfnlint.api import lint
+from cfnlint.core import get_rules
 from summary import Summary
 from template_checker.render import Renderer
 from template_checker.schema_reader import SchemaReader
@@ -59,6 +60,10 @@ class CheckerResult:
             return True
         return False
 
+def lint_cf(cf):
+    return lint(cf,
+        rules=get_rules([], [], ['I', 'W', 'E'], include_experimental=True),
+        regions=["us-east-1"])
 def get_checker_results(template_dirs):
     checker_results = []
     # Go through each template directory that had some change in it,
@@ -74,17 +79,17 @@ def get_checker_results(template_dirs):
                 # Render and lint the Service Instance template
                 current_checked_path = template_dir.instance_infra_path()
                 rendered_service_instance_cf = renderer.render_service_instance()
-                svc_checker_result = CheckerResult(current_checked_path, lint_all(rendered_service_instance_cf), None, rendered_service_instance_cf)
+                svc_checker_result = CheckerResult(current_checked_path, lint_cf(rendered_service_instance_cf), None, rendered_service_instance_cf)
                 checker_results.append(svc_checker_result)
                 if schema_for_template_dir.schema_type().pipeline_present:
                     current_checked_path = template_dir.pipeline_infra_path()
                     rendered_pipeline_cf = renderer.render_pipeline()
-                    pipeline_checker_result = CheckerResult(current_checked_path, lint_all(rendered_pipeline_cf), None, rendered_pipeline_cf)
+                    pipeline_checker_result = CheckerResult(current_checked_path, lint_cf(rendered_pipeline_cf), None, rendered_pipeline_cf)
                     checker_results.append(pipeline_checker_result)
             elif schema_for_template_dir.schema_type().is_env:
                 current_checked_path = template_dir.environment_infra_path()
                 rendered_cloudformation = renderer.render_environment()
-                checker_result = CheckerResult(current_checked_path, lint_all(rendered_cloudformation), [], rendered_cloudformation)
+                checker_result = CheckerResult(current_checked_path, lint_cf(rendered_cloudformation), [], rendered_cloudformation)
                 checker_results.append(checker_result)
         except jinja2.exceptions.TemplateSyntaxError as exc:
             checker_results.append(CheckerResult(current_checked_path, [], JinjaError(exc.message, exc.lineno), ""))
